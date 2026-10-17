@@ -1,3 +1,4 @@
+import sysconfig
 import json
 import os
 import subprocess
@@ -30,7 +31,7 @@ def test_installed_entrypoint_exit_matrix(tmp_path):
     rows.write_text('{"id":"private","score":"0"}', encoding="utf-8")
     pol.write_text('{"min":"0","max":"1"}', encoding="utf-8")
     env = dict(os.environ)
-    executable = str(Path(sys.executable).with_name("eval-score-bounds.exe" if os.name == "nt" else "eval-score-bounds"))
+    executable = str(Path(sysconfig.get_path("scripts")) / ("eval-score-bounds.exe" if os.name == "nt" else "eval-score-bounds"))
     help_run = subprocess.run([executable, "--help"], capture_output=True, text=True, env=env)
     assert help_run.returncode == 0 and not help_run.stderr
     okay = subprocess.run([executable, str(rows), str(pol)], capture_output=True, text=True, env=env)
