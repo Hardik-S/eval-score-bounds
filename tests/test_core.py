@@ -58,6 +58,16 @@ def test_duplicate_ids_and_policy_order(tmp_path):
         evaluate(write(tmp_path, "empty", ""), policy(tmp_path, '"2"', '"1"'))
 
 
+@pytest.mark.parametrize("body", [
+    '{"min":"0","min":"0","max":"1"}', '{"min":"0"}',
+    '{"min":"0","max":"1","extra":0}', '{"min":0,"max":"1"}',
+    '{"min":"0","max":"1"} {}', '[]',
+])
+def test_policy_schema_and_json_are_strict(tmp_path, body):
+    with pytest.raises(InvalidInput):
+        evaluate(write(tmp_path, "rows", ""), write(tmp_path, "policy", body))
+
+
 def test_both_parsers_attempted_after_bad_rows(tmp_path, monkeypatch):
     import eval_score_bounds.core as core
     calls = []
